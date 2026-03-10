@@ -9,6 +9,10 @@ spring:
     url: jdbc:mysql://localhost:3306/yu_picture?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true
     username: root
     password: 123456
+  # 文件上传设置更大的体积
+  servlet:
+    multipart:
+      max-file-size: 10MB
 
 # 通用配置项
 server:

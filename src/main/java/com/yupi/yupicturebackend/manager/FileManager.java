@@ -6,8 +6,6 @@ import cn.hutool.core.util.NumberUtil;
 import cn.hutool.core.util.RandomUtil;
 import com.qcloud.cos.model.PutObjectResult;
 import com.qcloud.cos.model.ciModel.persistence.ImageInfo;
-import com.qcloud.cos.model.ciModel.persistence.OriginalInfo;
-import com.yupi.yupicturebackend.common.ResultUtils;
 import com.yupi.yupicturebackend.config.CosClientConfig;
 import com.yupi.yupicturebackend.exception.BusinessException;
 import com.yupi.yupicturebackend.exception.ErrorCode;
@@ -23,10 +21,6 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-/**
- * 文件服务
- * @deprecated 已废弃，改为使用 upload 包的模板方法优化
- */
 @Slf4j
 @Service
 public class FileManager {

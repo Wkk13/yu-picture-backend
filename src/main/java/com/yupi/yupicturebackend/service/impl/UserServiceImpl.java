@@ -207,13 +207,18 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         String sortField = userQueryRequest.getSortField();
         String sortOrder = userQueryRequest.getSortOrder();
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq(ObjUtil.isNotNull( id), "id", id);
+        queryWrapper.eq(ObjUtil.isNotNull(id), "id", id);
         queryWrapper.like(StrUtil.isNotBlank(userName), "userName", userName);
         queryWrapper.eq(StrUtil.isNotBlank(userAccount), "userAccount", userAccount);
         queryWrapper.eq(StrUtil.isNotBlank(userProfile), "userProfile", userProfile);
         queryWrapper.eq(StrUtil.isNotBlank(userRole), "userRole", userRole);
         queryWrapper.orderBy(StrUtil.isNotEmpty(sortField), sortOrder.equals("ascend"), sortField);
         return queryWrapper;
+    }
+
+    @Override
+    public boolean isAdmin(User user) {
+        return user != null && !UserRoleEnum.ADMIN.getValue().equals(user.getUserRole());
     }
 }
 
