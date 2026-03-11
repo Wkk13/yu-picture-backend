@@ -4,6 +4,11 @@ import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.NumberUtil;
 import cn.hutool.core.util.RandomUtil;
+import cn.hutool.core.util.StrUtil;
+import cn.hutool.http.HttpResponse;
+import cn.hutool.http.HttpStatus;
+import cn.hutool.http.HttpUtil;
+import cn.hutool.http.Method;
 import com.qcloud.cos.model.PutObjectResult;
 import com.qcloud.cos.model.ciModel.persistence.ImageInfo;
 import com.yupi.yupicturebackend.config.CosClientConfig;
@@ -17,12 +22,19 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+/**
+ * 文件上传服务
+ * @Deprecated 已废弃，改为使用upload包模板方法优化
+ */
 
 @Slf4j
 @Service
+@Deprecated
 public class FileManager {
 
     @Resource
@@ -114,4 +126,53 @@ public class FileManager {
             log.error("file delete error, filepath = {}", file.getAbsolutePath());
         }
     }
-}
+
+
+    private void validPictureUrl(String fileUrl) {
+        //校验非空
+        ThrowUtils.throwIf(StrUtil.isBlank(fileUrl), ErrorCode.PARAMS_ERROR, "图片url不能为空");
+        //校验URL格式
+        try {
+            new URL(fileUrl);
+        } catch (MalformedURLException e) {
+           throw new BusinessException(ErrorCode.PARAMS_ERROR, "图片url格式错误");
+        }
+        //校验URL协议
+        ThrowUtils.throwIf(!fileUrl.startsWith("http://") && !fileUrl.startsWith("https://"),
+                ErrorCode.PARAMS_ERROR, "仅支持http或https协议的文件地址");
+        //发送HEAD请求,获取图片信息
+        HttpResponse httpResponse = null;
+        try {
+            httpResponse = HttpUtil.createRequest(Method.HEAD, fileUrl)
+                    .execute();
+            if (httpResponse.getStatus() != HttpStatus.HTTP_OK){
+                return;
+            }
+            //文件存在，文件类型校验
+            String contentType = httpResponse.header("Content-Type");
+            //不为空，才校验是否合法，这样校验规则才相对宽松
+            if (StrUtil.isNotBlank(contentType)){
+                //允许的图片类型
+                final List<String> ALLOW_CONTENT_TYPES = Arrays.asList("image/jpeg", "image/png", "image/jpg", "image/webp");
+                ThrowUtils.throwIf(!ALLOW_CONTENT_TYPES.contains(contentType.toLowerCase()),
+                        ErrorCode.PARAMS_ERROR, "图片类型错误");
+            }
+            //文件大小校验
+            String contentLengthStr = httpResponse.header("Content-Length");
+            if (StrUtil.isNotBlank(contentLengthStr)){
+                try {
+                    long contentLength = Long.parseLong(contentLengthStr);
+                    final long ONE_M = 1024 * 1024;
+                    ThrowUtils.throwIf(contentLength > 2 * ONE_M, ErrorCode.PARAMS_ERROR, "图片大小不能超过 2MB");
+                }catch (NumberFormatException  e){
+                    throw new BusinessException(ErrorCode.SYSTEM_ERROR, "图片大小格式异常");
+                }
+            }
+        }finally {
+            if (httpResponse != null){
+                httpResponse.close();
+            }
+
+            }
+        }
+    }

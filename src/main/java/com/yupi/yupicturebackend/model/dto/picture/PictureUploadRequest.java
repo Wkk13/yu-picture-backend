@@ -11,5 +11,9 @@ public class PictureUploadRequest implements Serializable {
      * id(图片id用于修改)
      */
     private Long id;
+    /**
+     * 文件路径
+     */
+    private String fileUrl;
 
 }
