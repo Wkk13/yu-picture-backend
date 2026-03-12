@@ -10,21 +10,17 @@ import com.yupi.yupicturebackend.exception.BusinessException;
 import com.yupi.yupicturebackend.exception.ErrorCode;
 import com.yupi.yupicturebackend.exception.ThrowUtils;
 import org.springframework.stereotype.Service;
-
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
 @Service
+/**
+ * url图片上传
+ */
 public class UrlPictureUpload extends PictureUploadTemplate {
-    /**
-     * 通过url上传图片
-     *
-     * @param inputSource   url
-     * @param uploadPathPrefix 上传路径前缀
-     * @return
-     */
+
     @Override
     protected String getOriginalFilename(Object inputSource) {
         String fileUrl = (String) inputSource;

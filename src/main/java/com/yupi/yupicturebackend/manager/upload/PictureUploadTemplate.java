@@ -47,14 +47,17 @@ public abstract class PictureUploadTemplate {
      * @return
      */
     public UploadPictureResult uploadPicture(Object inputSource, String uploadPathPrefix) {
-        // 1.校验图片
+        // 1. 校验图片
         validPicture(inputSource);
-        // 2.图片上传地址
+        // 2. 图片上传地址
         String uuid = RandomUtil.randomString(16);
         String originalFilename = getOriginalFilename(inputSource);
+        //给无后缀的图片默认添加后缀
+        String suffix = FileUtil.getSuffix(originalFilename);
+        suffix = StrUtil.isBlank(suffix) ? "jpg" : suffix;
         // 自己拼接文件上传路径，而不是使用原始文件名称，可以增强安全性
         String uploadFilename = String.format("%s_%s.%s", DateUtil.formatDate(new Date()), uuid,
-                FileUtil.getSuffix(originalFilename));
+                suffix);
         String uploadPath = String.format("/%s/%s", uploadPathPrefix, uploadFilename);
         File file = null;
         try {
