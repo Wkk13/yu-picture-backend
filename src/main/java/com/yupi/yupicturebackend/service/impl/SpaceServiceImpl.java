@@ -125,6 +125,13 @@ public class SpaceServiceImpl extends ServiceImpl<SpaceMapper, Space>
             UserVO userVO = userService.getUserVO(user);
             spaceVO.setUser(userVO);
         }
+        //填充权限列表，空间创建者自动拥有所有权限
+        List<String> permissionList = new ArrayList<>();
+        permissionList.add("picture:upload");
+        permissionList.add("picture:delete");
+        permissionList.add("picture:edit");
+        permissionList.add("space:manage");
+        spaceVO.setPermissionList(permissionList);
         return spaceVO;
     }
 

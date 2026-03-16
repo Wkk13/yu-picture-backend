@@ -114,6 +114,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         }
         LoginUserVO loginUserVO = new LoginUserVO();
         BeanUtils.copyProperties(user, loginUserVO);
+        // 将用户角色转换为枚举的 text 值（如 "admin"）而不是 value 值（"管理员"）
+        UserRoleEnum userRoleEnum = UserRoleEnum.getEnumByValue(user.getUserRole());
+        if (userRoleEnum != null) {
+            loginUserVO.setUserRole(userRoleEnum.getText());
+        }
         return loginUserVO;
 
     }
@@ -125,6 +130,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         }
         UserVO userVO = new UserVO();
         BeanUtils.copyProperties(user, userVO);
+        // 将用户角色转换为枚举的 text 值（如 "admin"）而不是 value 值（"管理员"）
+        UserRoleEnum userRoleEnum = UserRoleEnum.getEnumByValue(user.getUserRole());
+        if (userRoleEnum != null) {
+            userVO.setUserRole(userRoleEnum.getText());
+        }
         return userVO;
     }
 

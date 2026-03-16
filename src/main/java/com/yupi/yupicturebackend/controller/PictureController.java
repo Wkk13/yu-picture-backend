@@ -177,7 +177,7 @@ public class PictureController {
                                                              HttpServletRequest request) {
         long current = pictureQueryRequest.getCurrent();
         long size = pictureQueryRequest.getPageSize();
-        ThrowUtils.throwIf(size >= 20, ErrorCode.PARAMS_ERROR);
+        ThrowUtils.throwIf(size > 20, ErrorCode.PARAMS_ERROR, "分页大小不能超过 20");
         //普通用户默认只能看到审核通过的图片
         pictureQueryRequest.setReviewStatus(PictureReviewStatusEnum.PASS.getValue());
         //空间权限校验
@@ -244,8 +244,9 @@ public class PictureController {
     @GetMapping("/tag_category")
     public BaseResponse<PictureTagCategory> getTagCategory() {
         PictureTagCategory pictureTagCategory = new PictureTagCategory();
-        List<String> tagList = Arrays.asList("人物", "场景", "物品", "食物", "运动", "自然", "建筑", "游戏", "其他");
-        List<String> categoryList = Arrays.asList("人物", "场景", "物品", "食物", "运动", "自然", "建筑", "游戏", "其他");
+        List<String> categoryList = Arrays.asList("人物", "场景", "物品", "美食", "运动", "自然","建筑", "游戏", "其他");
+        // 2. 标签列表（9项，细粒度，与分类对应但不重复）
+        List<String> tagList = Arrays.asList("人像", "居家", "数码", "甜点", "健身", "山川", "城市建筑", "手游", "杂项");
         pictureTagCategory.setTagList(tagList);
         pictureTagCategory.setCategoryList(categoryList);
         return ResultUtils.success(pictureTagCategory);
@@ -273,11 +274,22 @@ public class PictureController {
     @PostMapping("/search/color")
     public BaseResponse<List<PictureVO>> searchPictureByColor(@RequestBody SearchPictureByColorRequest searchPictureByColorRequest,
                                                              HttpServletRequest request) {
-        ThrowUtils.throwIf(searchPictureByColorRequest == null, ErrorCode.PARAMS_ERROR);
+        if (searchPictureByColorRequest == null) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "请求体不能为空，请确保使用 JSON 格式提交");
+        }
         String picColor = searchPictureByColorRequest.getPictureColor();
         Long spaceId = searchPictureByColorRequest.getSpaceId();
         User loginUser = userService.getLoginUser(request);
         List<PictureVO> pictureVOList = pictureService.searchPictureByColor(spaceId, picColor, loginUser);
         return ResultUtils.success(pictureVOList);
-                                                             }
+    }
+    @PostMapping("edit/batch")
+    public BaseResponse<Boolean> editPictureByBatch(@RequestBody PictureEditByBatchRequest pictureEditByBatchRequest,
+                                                 HttpServletRequest request) {
+        ThrowUtils.throwIf(pictureEditByBatchRequest == null, ErrorCode.PARAMS_ERROR);
+        User loginUser = userService.getLoginUser(request);
+        pictureService.editPictureByBatch(pictureEditByBatchRequest, loginUser);
+        return ResultUtils.success(true);
+    }
+
 }
