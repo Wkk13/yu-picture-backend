@@ -110,7 +110,6 @@ public class UserController {
         return ResultUtils.success(b);
     }
     @PostMapping("/update")
-    @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
     public BaseResponse<Boolean> updateUser(@RequestBody UserUpdateRequest userUpdateRequest) {
         if (userUpdateRequest == null || userUpdateRequest.getId() <= 0){
             ThrowUtils.throwIf(true, ErrorCode.PARAMS_ERROR);
