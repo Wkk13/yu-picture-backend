@@ -526,7 +526,7 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture>
         ThrowUtils.throwIf(oldPicture == null, ErrorCode.NOT_FOUND_ERROR);
 
         //校验权限
-        this.checkPictureAuth(loginUser, oldPicture);
+        //this.checkPictureAuth(loginUser, oldPicture);
 
         //补充审核参数
         this.fillPictureParams(picture, loginUser);
@@ -546,7 +546,7 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture>
         ThrowUtils.throwIf(oldPicture == null, ErrorCode.NOT_FOUND_ERROR, "图片不存在");
 
         //校验权限
-        checkPictureAuth(loginUser, oldPicture);
+        //checkPictureAuth(loginUser, oldPicture);
         //开启事物
         transactionTemplate.execute(status -> {
             //操作数据库

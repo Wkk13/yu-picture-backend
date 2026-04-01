@@ -21,6 +21,20 @@ spring:
   servlet:
     multipart:
       max-file-size: 10MB
+  # RabbitMQ 配置（适配4.2.5版本）
+  rabbitmq:
+    host: localhost          # RabbitMQ服务器地址（本地部署填localhost）
+    port: 5672               # RabbitMQ默认端口（管理后台是15672，不要混淆）
+    username: guest          # 默认用户名（生产环境建议新建自定义用户）
+    password: guest          # 默认密码（生产环境务必修改）
+    virtual-host: /          # 默认虚拟主机
+    connection-timeout: 15000 # 连接超时时间（毫秒）
+    # 可选：消费者配置（提升稳定性）
+    listener:
+      simple:
+        acknowledge-mode: auto # 自动确认消息（新手推荐，生产可改为manual手动确认）
+        concurrency: 1         # 最小消费者数量
+        max-concurrency: 10    # 最大消费者数量
 
   redis:
     host: localhost
@@ -31,6 +45,9 @@ spring:
     store-type: redis
     # session30天后过期
     timeout: 2592000
+  ai:
+    dashscope:
+      api-key: ${DASH_SCOPE_API_KEY}
 
 # MyBatis-Plus 通用配置
 mybatis-plus:
@@ -56,4 +73,21 @@ knife4j:
         api-rule: package
         api-rule-resources:
           - com.yupi.yupicturebackend.controller
+
+# 阿里云AI配置
+aliYunAi:
+  apiKey: your-aliyun-api-key
+  apiUrl: https://dashscope.aliyuncs.com/api/v1/services/aigc/text-generation/generation
+  modelCode: qwen-max-2025-01-25
+
+# 腾讯云AI配置
+tencent:
+  ai:
+    secretId: your-secret-id
+    secretKey: your-secret-key
+    region: ap-southeast-1
+
+
+
+
 
